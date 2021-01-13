@@ -1,0 +1,10 @@
+*.jar
+z_*
+
+# Maven
+/target/
+
+# Maven wrapper
+/.mvn/wrapper/
+/mvnw
+/mvnw.cmd
