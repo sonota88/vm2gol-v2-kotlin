@@ -56,12 +56,12 @@ class Tokenizer {
                 tokens.add(Token(TokenKind.INT, s))
                 pos += s.length
 
-            } else if (re.match("^(==|!=|[(){}=+*,;])", rest)) {
+            } else if (re.match("""^(==|!=|[(){}=+*,;\[\]])""", rest)) {
                 val s = re.group(1)
                 tokens.add(Token(TokenKind.SYM, s))
                 pos += s.length
 
-            } else if (re.match("^([a-z_][a-z0-9_\\[\\]]*)", rest)) {
+            } else if (re.match("^([a-z_][a-z0-9_]*)", rest)) {
                 val s = re.group(1)
                 tokens.add(Token(TokenKind.IDENT, s))
                 pos += s.length

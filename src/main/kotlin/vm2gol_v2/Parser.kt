@@ -177,15 +177,38 @@ class Parser {
     }
 
     fun parseVar_declare(): NodeList {
+        val origPos = this.pos
+
         val t = peek()
         this.pos++
         val varName = t.getStr()
 
-        consumeSym(";")
+        val t1 = peek()
+        var arraySize: Int? = null
+        if (t1.is_(TokenKind.SYM, "[")) {
+            consumeSym("[")
+            arraySize = peek().getStr().toInt()
+            pos++
+            consumeSym("]")
+        }
 
-        return NodeList()
-            .add("var")
-            .add(varName)
+        if (peek().is_(TokenKind.SYM, ";")) {
+            consumeSym(";")
+        } else {
+            this.pos = origPos
+            return NodeList.empty()
+        }
+
+        if (arraySize == null) {
+            return NodeList()
+                .add("var")
+                .add(varName)
+        } else {
+            return NodeList()
+                .add("var_array")
+                .add(varName)
+                .add(arraySize)
+        }
     }
 
     fun parseVar_init(): NodeList {
@@ -219,6 +242,19 @@ class Parser {
         } else {
             throw Utils.panic("unexpected token")
         }
+    }
+
+    fun parseVar_v2(): NodeList {
+        // Utils.puts_e("    -->> parseVar_v2")
+
+        consumeKw("var")
+
+        var declare = parseVar_declare()
+        if (0 < declare.size()) {
+            return declare
+        }
+
+        return parseVar_init()
     }
 
     fun parseExprRight(exprL: Node): Node {
@@ -459,7 +495,7 @@ class Parser {
 
         when (t.getStr()) {
             "func"     -> { return parseFunc()      }
-            "var"      -> { return parseVar()       }
+            "var"      -> { return parseVar_v2()    }
             "set"      -> { return parseSet()       }
             "call"     -> { return parseCall()      }
             "call_set" -> { return parseCallSet()   }

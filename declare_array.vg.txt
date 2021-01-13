@@ -1,0 +1,5 @@
+func main() {
+  // var a;
+  // var b = 11;
+  var xs[22];
+}

@@ -108,6 +108,12 @@ class CodeGenerator {
         }
     }
     
+    fun genVar_array(fnArgNames: Names, lvarNames: Names, stmtRest: NodeList) {
+        val lvarName = stmtRest.get(0).getStrVal()
+        val size     = stmtRest.get(1).getIntVal()
+        puts("  sub_sp ${size}")
+    }
+    
     fun genExpr_push(fnArgNames: Names, lvarNames: Names, value: Node) {
         var pushArg: String
 
@@ -463,6 +469,10 @@ class CodeGenerator {
                 val stmtRest = _stmt.rest() 
                 lvarNames.add(stmtRest.first().getStrVal())
                 genVar(fnArgNames, lvarNames, stmtRest)
+            } else if (_stmt.first().strEq("var_array")) {
+                val stmtRest = _stmt.rest() 
+                lvarNames.add("array:" + stmtRest.first().getStrVal())
+                genVar_array(fnArgNames, lvarNames, stmtRest)
             } else {
                 codegenStmt(fnArgNames, lvarNames, _stmt)
             }
